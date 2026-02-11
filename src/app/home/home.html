@@ -1,0 +1,92 @@
+<div class="p-4 space-y-4">
+  <p-card class="rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="text-xl font-semibold">HLabMonitor</div>
+        <div class="text-sm text-surface-600 dark:text-surface-300">
+          Overview
+          @if (lastRefresh(); as d) {
+            <span class="ml-2 opacity-80">
+              Last update : {{ d | date:'short' }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <p-button
+        label="Refresh"
+        icon="pi pi-refresh"
+        [loading]="loading()"
+        (onClick)="refresh()"
+        styleClass="rounded-xl border-0 bg-blue-200 text-slate-900 hover:bg-blue-300
+              dark:bg-blue-950/60 dark:text-slate-100 dark:hover:bg-blue-950/10">
+      </p-button>
+    </div>
+  </p-card>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
+    <p-card class="lg:col-span-8 rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm">
+      <div class="flex items-baseline justify-between gap-3 mb-3">
+        <div class="font-semibold">Results</div>
+        <div class="text-sm text-surface-500 dark:text-surface-300">Last 24 hours</div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        @for (t of resultTiles(); track t.label) {
+          <div class="flex items-center gap-3 rounded-xl border p-4"
+               [ngClass]="{
+               'border-green-200 bg-green-50 dark:border-green-900/40 dark:bg-green-950/30': t.severity === 'success',
+               'border-yellow-200 bg-yellow-50 dark:border-yellow-700/40 dark:bg-yellow-800/30': t.severity === 'warning',
+               'border-orange-200 bg-orange-50 dark:border-orange-900/40 dark:bg-orange-950/30': t.severity === 'danger',
+               'border-red-400 bg-red-200 dark:border-red-900/40 dark:bg-red-950/30': t.severity === 'error',
+             }">
+            <div class="h-11 w-11 rounded-lg grid place-items-center bg-black/5 dark:bg-white/10">
+              <i [class]="t.icon" class="text-lg"></i>
+            </div>
+
+            <div class="min-w-0">
+              <div class="text-sm text-surface-600 dark:text-surface-300 truncate">{{ t.label }}</div>
+              <div class="text-2xl font-semibold">{{ t.value | number }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </p-card>
+
+    <p-card class="lg:col-span-4 rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm">
+      <div class="hidden">
+        <div #swSuccess class="bg-green-200 dark:bg-green-900"></div>
+        <div #swWarning class="bg-yellow-200 dark:bg-yellow-700"></div>
+        <div #swFailure class="bg-orange-200   dark:bg-orange-900"></div>
+        <div #swError   class="bg-red-200  dark:bg-red-900"></div>
+      </div>
+
+      <p-chart
+        type="doughnut"
+        [data]="statusChartData()"
+        [options]="statusChartOptions">
+      </p-chart>
+    </p-card>
+
+    <p-card class="lg:col-span-12 rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm">
+      <div class="flex items-baseline justify-between gap-3 mb-3">
+        <div class="font-semibold">Monitored targets</div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        @for (t of targetTiles(); track t.label) {
+          <div class="flex items-center gap-3 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-950 p-4">
+            <div class="h-11 w-11 rounded-lg grid place-items-center bg-black/5 dark:bg-white/10">
+              <i [class]="t.icon" class="text-lg"></i>
+            </div>
+
+            <div class="min-w-0">
+              <div class="text-sm text-surface-600 dark:text-surface-300 truncate">{{ t.label }}</div>
+              <div class="text-2xl font-semibold">{{ t.value | number }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </p-card>
+  </div>
+</div>
