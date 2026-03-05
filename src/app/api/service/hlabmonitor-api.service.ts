@@ -1,20 +1,26 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {
+  CheckNotificationsService,
   CheckResultsService,
-  CheckTargetIdsService, ManageTargetsService,
-  PageResponseTargetResult, Statistics,
+  CheckTargetIdsService,
+  ManageTargetsService,
+  Notification,
+  PageResponseTargetResult,
+  Statistics,
   TargetId,
   TargetResult
 } from '../../generated-api';
 import {
-  TargetResultDto,
-  TargetIdDto,
+  NotificationDto,
+  NotificationStatusDto,
   PageResponseTargetResultDto,
   StatisticsDto,
-  SubStatisticsDto,
   StatisticsDtoType,
+  SubStatisticsDto,
   TargetDtoType,
+  TargetIdDto,
+  TargetResultDto,
   TargetResultDtoType
 } from '../model/modelsDto';
 
@@ -23,7 +29,8 @@ export class HLabMonitorApiService {
   constructor(
     private readonly checkResultsService: CheckResultsService,
     private readonly checkTargetIdsService: CheckTargetIdsService,
-    private readonly manageTargetsService: ManageTargetsService
+    private readonly manageTargetsService: ManageTargetsService,
+    private readonly checkNotificationsService: CheckNotificationsService
   ) {}
 
   findAllTargetResultDto() : Observable<Array<TargetResultDto>> {
@@ -81,6 +88,34 @@ export class HLabMonitorApiService {
       );
   }
 
+  getActiveNotifications(): Observable<Array<NotificationDto>> {
+    return this.checkNotificationsService.getActiveNotifications().pipe(
+      map((generated: Notification[]) => generated.map(n => this.toNotificationDto(n)))
+    );
+  }
+
+  getNotificationsCount(): Observable<number> {
+    return this.checkNotificationsService.countActiveNotifications()
+  }
+
+  private toNotificationDto(generated: Notification): NotificationDto {
+    if(generated?.notificationId == undefined ||
+      generated?.targetId == undefined ||
+      generated?.notificationStatus == undefined ||
+      generated?.fireAt == undefined ||
+      generated?.oldMonitoringResult == undefined)
+      throw new Error("An error occured");
+    return {
+      notificationId: generated.notificationId,
+      targetId: this.toTargetIdDto(generated.targetId),
+      notificationStatus: this.toNotificationStatusDto(generated.notificationStatus),
+      fireAt: generated.fireAt,
+      resolvedAt: generated.resolvedAt,
+      oldMonitoringResult: this.toTargetResultDtoResultEnum(generated.oldMonitoringResult)!,
+      newMonitoringResult: generated?.newMonitoringResult === null ? undefined : this.toTargetResultDtoResultEnum(generated.newMonitoringResult)
+    };
+  }
+
   private toTargetResultDto(generated: TargetResult): TargetResultDto {
     if(generated?.id == undefined ||
       generated?.result == undefined ||
@@ -89,7 +124,7 @@ export class HLabMonitorApiService {
       throw new Error("An error occured");
     return {
       id: this.toTargetIdDto(generated.id),
-      result: this.toTargetResultDtoResultEnum(generated.result),
+      result: this.toTargetResultDtoResultEnum(generated.result)!,
       message: generated.message,
       checkedAt: generated.checkedAt,
     };
@@ -103,7 +138,9 @@ export class HLabMonitorApiService {
     };
   }
 
-  private toTargetResultDtoResultEnum(generated: TargetResult.ResultEnum): TargetResultDtoType {
+  private toTargetResultDtoResultEnum(generated: TargetResult.ResultEnum | undefined): TargetResultDtoType | undefined {
+    if (generated === undefined)
+      return undefined;
     switch(generated) {
       case "SUCCESS":
         return TargetResultDtoType.Success;
@@ -114,7 +151,7 @@ export class HLabMonitorApiService {
       case "ERROR":
         return TargetResultDtoType.Error;
       case "UNKNOWN":
-        this.throwError(generated);
+        return this.throwError(generated);
       default:
         return this.assertUnreachable(generated);
     }
@@ -193,7 +230,7 @@ export class HLabMonitorApiService {
       case "NOTIFICATION_TRIGGER":
         return StatisticsDtoType.NotificationTrigger
       case "UNKNOWN":
-        this.throwError(generated);
+        return this.throwError(generated);
       default:
         return this.assertUnreachable(generated);
     }
@@ -205,5 +242,22 @@ export class HLabMonitorApiService {
 
   private throwError(x: unknown) : never {
     throw new Error(`Unexpected enum value: ${x}`);
+  }
+
+  private toNotificationStatusDto(generated: Notification.NotificationStatusEnum): NotificationStatusDto {
+    switch(generated) {
+      case "TO_SEND":
+        return NotificationStatusDto.ToSend
+      case "SEND":
+        return NotificationStatusDto.Send
+      case "TO_TERMINATE":
+        return NotificationStatusDto.ToTerminate
+      case "TERMINATED":
+        return NotificationStatusDto.Terminated
+      case "FAILED":
+        return NotificationStatusDto.Failed
+      default:
+        return this.assertUnreachable(generated);
+    }
   }
 }

@@ -1,11 +1,83 @@
 <div class="card">
   <p-menubar [model]="items">
-    <ng-template #start>
-      LOGO
+    <ng-template pTemplate="start">
+      <a routerLink="/">
+        <!-- Light -->
+        <img
+          src="/hlabmonitor-combined.svg"
+          alt="HLabMonitor"
+          class="h-12 w-auto dark:hidden"
+        />
+
+        <!-- Dark -->
+        <img
+          src="/hlabmonitor-combined-dark.svg"
+          alt="HLabMonitor"
+          class="h-12 w-auto hidden dark:block"
+        />
+      </a>
     </ng-template>
-    <ng-template #end>
-      <div class="flex items-center gap-2">
-        USER PART
+    <ng-template pTemplate="end">
+      <div class="flex gap-10">
+        <div class="justify-center">
+          <p-popover
+            #notificationOverlay
+            dismissable
+            appendTo="body"
+            styleClass="max-h-80 overflow-x-clip overflow-y-auto">
+
+            <ng-template pTemplate="content">
+              <div class="p-4">
+                <div class="mb-4">
+                  <h3 class="text-lg font-bold m-1">Notifications</h3>
+                </div>
+
+                @if (notificationCount() !== 0) {
+                  @for (notification of activeNotifications(); track notification.targetId.id) {
+                    <a routerLink="/monitoring/{{ notification.targetId.id }}">
+                      <div class="flex items-center m-2">
+                        <div [ngClass]="colorFor(notification.oldMonitoringResult)" class="mr-2 h-7 w-7 rounded-lg grid place-items-center">
+                          <i class="text-lg pi"
+                             [ngClass]="iconFor(notification.oldMonitoringResult)">
+                          </i>
+                        </div>
+
+                        <div class="min-w-0">
+                          <div class="font-semibold text-sm">{{ notification.targetId.id }}</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center m-2">
+                        <div class="min-w-0">
+                          <div class="text-xs">Since {{ notification.fireAt | date:'M/d/yy, h:mm:ss a' }}</div>
+                        </div>
+                      </div>
+                    </a>
+                  }
+                }
+
+                @if (notificationCount() === 0) {
+                  <div class="text-center p-6 text-muted">
+                    <i class="pi pi-bell-slash text-4xl mb-3 block"></i>
+                    <span class="text-sm">No active notifications</span>
+                  </div>
+                }
+              </div>
+            </ng-template>
+          </p-popover>
+          <p-overlaybadge
+            [value]="notificationCount() > 0 ? notificationCount() : 0"
+            severity="danger">
+            <p-button
+              #bellBtn
+              (click)="onBellClick($event)"
+              (keydown.enter)="onBellClick($event)"
+              icon="pi pi-bell"
+              [rounded]="true" [text]="true" [raised]="true"/>
+          </p-overlaybadge>
+        </div>
+        <div>
+          USER PART
+        </div>
       </div>
     </ng-template>
   </p-menubar>

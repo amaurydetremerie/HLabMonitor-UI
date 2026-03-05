@@ -1,11 +1,19 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, signal, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  signal,
+  ViewChild
+} from '@angular/core';
 import {StatisticsDto, StatisticsDtoType} from '../api/model/StatisticsDto';
 import {HLabMonitorApiService} from '../api/service/hlabmonitor-api.service';
 import {finalize} from 'rxjs';
 import {CommonModule, DatePipe, DecimalPipe, NgClass} from '@angular/common';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
+import {ButtonModule} from 'primeng/button';
+import {CardModule} from 'primeng/card';
+import {ChartModule} from 'primeng/chart';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +27,6 @@ import { ChartModule } from 'primeng/chart';
     CommonModule
   ],
   templateUrl: './home.html',
-  styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home implements AfterViewInit {
