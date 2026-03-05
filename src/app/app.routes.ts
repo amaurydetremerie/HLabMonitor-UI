@@ -4,6 +4,7 @@ import {Home} from './home/home';
 
 export const routes: Routes = [
   {path: 'monitoring', component: Monitoring},
+  {path: 'monitoring/:id', component: Monitoring},
   {path: '', component: Home},
   {path: 'home', redirectTo: ''},
   {path: '**', redirectTo: ''}

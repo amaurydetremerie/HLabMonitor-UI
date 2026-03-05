@@ -3,3 +3,4 @@ export * from './targetDto';
 export * from './targetIdDto';
 export * from './targetResultDto';
 export * from './StatisticsDto';
+export * from './notificationDto';

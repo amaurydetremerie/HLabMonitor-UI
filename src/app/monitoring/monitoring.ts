@@ -15,6 +15,7 @@ import {TagModule} from 'primeng/tag';
 import {DatePipe, NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {toObservable, toSignal} from '@angular/core/rxjs-interop';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-monitoring',
@@ -34,6 +35,7 @@ import {toObservable, toSignal} from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Monitoring {
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   private compare(a: string, b: string): number {
     return a.localeCompare(b);
@@ -126,8 +128,10 @@ export class Monitoring {
 
   constructor() {
     effect(() => {
-      const allowedIds = new Set(this.targetOptions().map(t => t.id));
+      const options = this.targetOptions();
+      if (!options.length) return;
 
+      const allowedIds = new Set(this.targetOptions().map(t => t.id));
       this.selectedTargets.update(curr =>
         curr.filter(t => allowedIds.has(t.id))
       );
@@ -136,6 +140,11 @@ export class Monitoring {
     effect(() => {
       const _ = this.filters();
       this.first.set(0);
+    });
+
+    this.activatedRoute.params.subscribe(params => {
+      if(params['id'] != undefined)
+        this.selectedTargets.set([{id: params['id']}]);
     });
   }
 
