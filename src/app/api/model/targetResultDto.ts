@@ -1,4 +1,4 @@
-import { TargetIdDto } from './targetIdDto';
+import {TargetIdDto} from './targetIdDto';
 
 export interface TargetResultDto {
   id: TargetIdDto;

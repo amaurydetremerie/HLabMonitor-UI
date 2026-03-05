@@ -1,23 +1,27 @@
-import { Injectable } from '@angular/core';
-import {map, Observable, Observer} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {map, Observable} from 'rxjs';
 import {
   CheckNotificationsService,
   CheckResultsService,
-  CheckTargetIdsService, ManageTargetsService,
-  PageResponseTargetResult, Statistics,
+  CheckTargetIdsService,
+  ManageTargetsService,
+  Notification,
+  PageResponseTargetResult,
+  Statistics,
   TargetId,
-  TargetResult,
-  Notification
+  TargetResult
 } from '../../generated-api';
 import {
-  TargetResultDto,
-  TargetIdDto,
+  NotificationDto,
+  NotificationStatusDto,
   PageResponseTargetResultDto,
   StatisticsDto,
-  SubStatisticsDto,
   StatisticsDtoType,
+  SubStatisticsDto,
   TargetDtoType,
-  TargetResultDtoType, NotificationDto, NotificationStatusDto
+  TargetIdDto,
+  TargetResultDto,
+  TargetResultDtoType
 } from '../model/modelsDto';
 
 @Injectable({ providedIn: 'root' })
@@ -147,7 +151,7 @@ export class HLabMonitorApiService {
       case "ERROR":
         return TargetResultDtoType.Error;
       case "UNKNOWN":
-        this.throwError(generated);
+        return this.throwError(generated);
       default:
         return this.assertUnreachable(generated);
     }
@@ -226,7 +230,7 @@ export class HLabMonitorApiService {
       case "NOTIFICATION_TRIGGER":
         return StatisticsDtoType.NotificationTrigger
       case "UNKNOWN":
-        this.throwError(generated);
+        return this.throwError(generated);
       default:
         return this.assertUnreachable(generated);
     }

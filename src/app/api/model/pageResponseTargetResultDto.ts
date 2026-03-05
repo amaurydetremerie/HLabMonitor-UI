@@ -1,4 +1,4 @@
-import { TargetResultDto } from './targetResultDto';
+import {TargetResultDto} from './targetResultDto';
 
 export interface PageResponseTargetResultDto {
     content: Array<TargetResultDto>;

@@ -1,10 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, signal} from '@angular/core';
 import {catchError, distinctUntilChanged, finalize, forkJoin, map, of, switchMap, tap} from 'rxjs';
-import {
-  TargetDtoType,
-  TargetIdDto,
-  TargetResultDtoType
-} from '../api/model/modelsDto';
+import {TargetDtoType, TargetIdDto, TargetResultDtoType} from '../api/model/modelsDto';
 import {HLabMonitorApiService} from '../api/service/hlabmonitor-api.service';
 import {ButtonModule} from 'primeng/button';
 import {DatePickerModule} from 'primeng/datepicker';
@@ -31,7 +27,6 @@ import {ActivatedRoute} from '@angular/router';
     NgClass
   ],
   templateUrl: './monitoring.html',
-  styleUrl: './monitoring.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Monitoring {

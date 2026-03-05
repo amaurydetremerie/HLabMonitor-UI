@@ -1,16 +1,16 @@
-import {Component, signal, ViewChild, OnDestroy, ChangeDetectionStrategy, inject} from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
-import { MenubarModule } from 'primeng/menubar';
-import { BadgeModule } from 'primeng/badge';
-import { ListboxModule } from 'primeng/listbox';
+import {ChangeDetectionStrategy, Component, inject, OnDestroy, signal, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MenubarModule} from 'primeng/menubar';
+import {BadgeModule} from 'primeng/badge';
+import {ListboxModule} from 'primeng/listbox';
 import {Button, ButtonModule} from 'primeng/button';
-import { PopoverModule, Popover } from 'primeng/popover';
-import { MenuItem } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import {Popover, PopoverModule} from 'primeng/popover';
+import {MenuItem} from 'primeng/api';
+import {Subscription} from 'rxjs';
 import {HLabMonitorApiService} from '../api/service/hlabmonitor-api.service';
 import {HLabMonitorSseService} from '../api/service/hlabmonitor-sse.service';
 import {NotificationDto} from '../api/model/notificationDto';
-import {OverlayBadge, OverlayBadgeModule} from 'primeng/overlaybadge';
+import {OverlayBadgeModule} from 'primeng/overlaybadge';
 import {RouterLink} from '@angular/router';
 import {TargetResultDtoType} from '../api/model/targetResultDto';
 
@@ -25,11 +25,9 @@ import {TargetResultDtoType} from '../api/model/targetResultDto';
     ButtonModule,
     PopoverModule,
     OverlayBadgeModule,
-    RouterLink,
-    NgOptimizedImage
+    RouterLink
   ],
   templateUrl: './menu.html',
-  styleUrls: ['./menu.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Menu implements OnDestroy {
